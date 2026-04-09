@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken"
 import { loginSchema, resetPasswordConfirmSchema, resetPasswordSchema } from '../schemas/authSchemas'
 import { randomUUID } from 'crypto'
 import { AppError } from '../errors/AppError'
+import { JWT_SECRET } from '../config/jwtSecret'
 
 export class AuthController {
     
@@ -26,7 +27,7 @@ export class AuthController {
 
         const {password: _, ...userWithoutPassword} = user
 
-        const token = jwt.sign({id: user.id, email: user.email, role: user.role}, "emanuelTesteSecreta", {expiresIn: "1d"})
+        const token = jwt.sign({id: user.id, email: user.email, role: user.role}, JWT_SECRET, {expiresIn: "1d"})
 
         return response.json({token: token, user: userWithoutPassword})
     }
@@ -54,8 +55,7 @@ export class AuthController {
             })
 
             return response.status(200).json({
-                message: "Token de redefinição gerado com sucesso",
-                resetToken: token
+                message: "Se o email estiver cadastrado, o processo foi iniciado.",
             })
 
 

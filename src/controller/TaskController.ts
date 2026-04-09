@@ -109,7 +109,7 @@ export class TaskController {
 
             const taskForDelete = await prisma.task.delete({where: {id}})
 
-             return response.status(204).json({ messsage: "Task deletada com sucesso", taskForDelete})
+            return response.status(200).json({message: "Task deletada com sucesso", task: taskForDelete})
             
         } catch (error) {
             next(error)

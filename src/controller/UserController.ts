@@ -4,8 +4,7 @@ import bcrypt from "bcrypt"
 import { prisma } from "../config/PrismaConfig"
 import { AppError } from "../errors/AppError"
 import { UserRole } from "../types/roles"
-import { changePasswordSchema } from "../schemas/userSchemas"
-import { hash } from "bcrypt"
+import { changePasswordSchema, updateProfileSchema } from "../schemas/userSchemas"
 
 export class UserController {
 
@@ -21,7 +20,7 @@ export class UserController {
 
         const userExists = await prisma.user.findUnique({where: {email}})
         if(userExists) {
-            throw new AppError("Usuário já existe")
+            throw new AppError("Usuário já existe", 409)
         }
 
         const hashedPassword = await bcrypt.hash(password, 10)
@@ -63,6 +62,48 @@ export class UserController {
             next(error)
         }
        
+    }
+
+    async updateProfile(request: Request, response: Response, next: NextFunction) {
+        try {
+            const userId = request.user?.id
+
+            if(!userId) {
+                throw new AppError("Usuário não autenticado", 401)
+            }
+
+            const data = updateProfileSchema.parse(request.body)
+
+            const existing = await prisma.user.findUnique({where: {id: userId}})
+            if(!existing) {
+                throw new AppError("Usuário não encontrado", 404)
+            }
+
+            if(data.email !== undefined && data.email !== existing.email) {
+                const emailTaken = await prisma.user.findUnique({where: {email: data.email}})
+                if(emailTaken) {
+                    throw new AppError("E-mail já está em uso", 409)
+                }
+            }
+
+            const updated = await prisma.user.update({
+                where: {id: userId},
+                data: {
+                    ...(data.name !== undefined ? {name: data.name} : {}),
+                    ...(data.email !== undefined ? {email: data.email} : {}),
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    role: true,
+                },
+            })
+
+            return response.status(200).json({message: "Perfil atualizado", user: updated})
+        } catch (error) {
+            next(error)
+        }
     }
 
     async updateRole(request: Request, response: Response, next: NextFunction) {

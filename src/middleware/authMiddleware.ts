@@ -1,6 +1,7 @@
 import {Request, Response, NextFunction} from "express"
 import jwt from "jsonwebtoken"
 import { UserRole } from "../types/roles"
+import { JWT_SECRET } from "../config/jwtSecret"
 
 interface JwtPayload {
     id: string
@@ -18,7 +19,7 @@ export function authMiddleware(request: Request, response: Response, next: NextF
     const [_, token] = authHeader?.split(" ")
 
     try {
-        const decoded = jwt.verify(token, "emanuelTesteSecreta") as JwtPayload
+        const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload
 
         request.user = {
             id: decoded.id,
