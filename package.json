@@ -7,7 +7,7 @@
     "start": "node dist/server.js",
     "build": "tsc",
     "prisma:migrate": "npx prisma migrate dev",
-    "prisma:deploy": "npx prisma migrate deploy --schema=src/prisma/schema.prisma",
+    "prisma:deploy": "npx prisma migrate deploy --schema=src/prisma/migrations/schema.prisma",
     "prisma:studio": "npx prisma studio",
     "test": "echo \"Nenhum teste configurado ainda\" && exit 0"
   },
@@ -37,6 +37,6 @@
     "typescript": "^5.9.2"
   },
   "prisma": {
-    "schema": "src/prisma/schema.prisma" 
+    "schema": "src/prisma/migrations/schema.prisma" 
   }
 }
