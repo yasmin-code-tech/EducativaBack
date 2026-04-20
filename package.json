@@ -7,6 +7,7 @@
     "start": "node dist/server.js",
     "build": "tsc",
     "prisma:migrate": "npx prisma migrate dev",
+    "prisma:deploy": "npx prisma migrate deploy",
     "prisma:studio": "npx prisma studio",
     "test": "echo \"Nenhum teste configurado ainda\" && exit 0"
   },
