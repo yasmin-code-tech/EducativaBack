@@ -9,10 +9,11 @@ app.use(cors())
 app.use(express.json())
 
 const PORT = 3333
+const HOST = process.env.HOST || '0.0.0.0'
 
 app.use(routes)
 app.use(errorHandler)
 
-app.listen(PORT, ()=>{
-    console.log(`Rodando na porta ${PORT}`)
+app.listen(PORT, HOST, ()=>{
+    console.log(`Rodando na porta ${PORT} em ${HOST}`)
 })

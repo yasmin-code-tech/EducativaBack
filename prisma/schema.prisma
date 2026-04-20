@@ -40,6 +40,23 @@ model Task {
   user User @relation(fields: [userId], references: [id])
 }
 
+model Goal {
+  id String @id @default(uuid())
+  title String
+  text String
+  priority String @default("media")
+  completed Boolean @default(false)
+  status String @default("pending")
+  totalSessions Int @default(1)
+  completedSessions Int @default(0)
+  totalTime Int @default(0)
+  createdAt DateTime @default(now())
+  completedAt DateTime?
+
+  userId String
+  user User @relation(fields: [userId], references: [id])
+}
+
 enum Role {
   USER
   ADMIN
@@ -51,6 +68,7 @@ model User {
   email String @unique
   password String 
   role Role @default(USER)
+  xp Int @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -58,5 +76,6 @@ model User {
   resetTokenExpiresAt DateTime?
 
   tasks Task[]
+  goals Goal[]
 }
 

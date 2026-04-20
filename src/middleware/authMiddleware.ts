@@ -10,10 +10,15 @@ interface JwtPayload {
 }
 
 export function authMiddleware(request: Request, response: Response, next: NextFunction) {
-    const authHeader = request.headers.authorization
+    let authHeader = request.headers.authorization || request.headers['Authorization'] || request.headers['x-access-token']
+    if (Array.isArray(authHeader)) {
+        authHeader = authHeader[0]
+    }
 
-    if(!authHeader) {
-        return response.status(401).json({message: "Token não fornecido"})
+    console.log('authHeader:', authHeader)
+
+    if (!authHeader) {
+        return response.status(401).json({ message: "Token não fornecido" })
     }
 
     const [_, token] = authHeader?.split(" ")
@@ -27,9 +32,11 @@ export function authMiddleware(request: Request, response: Response, next: NextF
             role: decoded.role
         }
 
+        console.log('Authenticated user:', request.user)
         next()
     } catch (error) {
-        return response.status(401).json({message: "Token inválido ou expirado"})        
+        console.error('Token verification error:', error)
+        return response.status(401).json({ message: "Token inválido ou expirado" })
     }
 
 }

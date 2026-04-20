@@ -49,14 +49,28 @@ export class UserController {
                 id: true,
                 name: true,
                 email: true,
-                role: true
+                role: true,
+                xp: true
             }})
 
             if(!user) {
                 throw new AppError("Usuário não encontrado", 404)
             }
 
-            return response.status(200).json({message: "Perfil do usuário", user})
+            const xp = user.xp ?? 0
+            const xpToNextLevel = 100
+            const xpProgress = xp % xpToNextLevel
+            const level = Math.floor(xp / xpToNextLevel) + 1
+
+            return response.status(200).json({
+                message: "Perfil do usuário",
+                user: {
+                    ...user,
+                    level,
+                    xpProgress,
+                    xpToNextLevel,
+                },
+            })
                 
         } catch (error) {
             next(error)
