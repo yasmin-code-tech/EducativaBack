@@ -1,0 +1,18 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.goalRouter = void 0;
+const express_1 = require("express");
+const GoalController_1 = require("../controller/GoalController");
+const authMiddleware_1 = require("../middleware/authMiddleware");
+const goalRouter = (0, express_1.Router)();
+exports.goalRouter = goalRouter;
+const goalController = new GoalController_1.GoalController();
+goalRouter.get('/', authMiddleware_1.authMiddleware, goalController.list);
+goalRouter.post('/', authMiddleware_1.authMiddleware, goalController.create);
+goalRouter.get('/history', authMiddleware_1.authMiddleware, goalController.history);
+goalRouter.get('/metrics', authMiddleware_1.authMiddleware, goalController.metrics);
+goalRouter.get('/:id', authMiddleware_1.authMiddleware, goalController.find);
+goalRouter.put('/:id', authMiddleware_1.authMiddleware, goalController.update);
+goalRouter.patch('/:id/progress', authMiddleware_1.authMiddleware, goalController.progress);
+goalRouter.patch('/:id/complete', authMiddleware_1.authMiddleware, goalController.complete);
+goalRouter.delete('/:id', authMiddleware_1.authMiddleware, goalController.delete);
