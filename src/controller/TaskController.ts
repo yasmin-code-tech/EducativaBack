@@ -124,6 +124,10 @@ export class TaskController {
             const {id} = idSchema.parse(request.params)
             const userId = request.user?.id
 
+            if (!userId) {
+                throw new AppError("Usuário não autenticado", 401)
+            }
+
             const validateData = updateTaskSchema.parse(request.body)
 
             if(Object.keys(validateData).length === 0) {
@@ -134,6 +138,14 @@ export class TaskController {
                 (validateData as any).color = typeColorMap[validateData.type];
             }
 
+            const existingTask = await prisma.task.findUnique({
+                where: { id }
+            })
+
+            if (!existingTask || existingTask.userId !== userId) {
+                throw new AppError("Task não encontrada ou não pertence a este usuário", 404)
+            }
+
             const taskForUpdate = await prisma.task.update({
                 where: {
                     id,
@@ -141,6 +153,14 @@ export class TaskController {
                 },
                 data: validateData
             })
+
+            // Se a tarefa está sendo marcada como concluída agora
+            if (validateData.completed === true && existingTask.completed === false) {
+                await prisma.user.update({
+                    where: { id: userId },
+                    data: { xp: { increment: 10 } }
+                })
+            }
 
             return response.status(200).json({message: "Task atualizada com sucesso", taskForUpdate})
             
