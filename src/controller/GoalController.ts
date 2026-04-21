@@ -195,16 +195,37 @@ export class GoalController {
       const nextCompletedSessions = goal.completedSessions + 1
       const isCompleted = nextCompletedSessions >= goal.totalSessions
 
-      const updatedGoal = await prisma.goal.update({
-        where: { id },
-        data: {
-          completedSessions: { increment: 1 },
-          totalTime: { increment: duration },
-          completed: isCompleted,
-          status: isCompleted ? 'completed' : 'in-progress',
-          ...(isCompleted ? { completedAt: new Date() } : {}),
-        },
-      })
+      let updatedGoal;
+
+      if (isCompleted) {
+        const [goalResult, userResult] = await prisma.$transaction([
+          prisma.goal.update({
+            where: { id },
+            data: {
+              completedSessions: { increment: 1 },
+              totalTime: { increment: duration },
+              completed: true,
+              status: 'completed',
+              completedAt: new Date(),
+            },
+          }),
+          prisma.user.update({
+            where: { id: userId },
+            data: { xp: { increment: 10 } },
+          }),
+        ])
+        updatedGoal = goalResult;
+      } else {
+        updatedGoal = await prisma.goal.update({
+          where: { id },
+          data: {
+            completedSessions: { increment: 1 },
+            totalTime: { increment: duration },
+            completed: false,
+            status: 'in-progress',
+          },
+        })
+      }
 
       return response.status(200).json({ message: 'Progresso atualizado', goal: updatedGoal })
     } catch (error) {
