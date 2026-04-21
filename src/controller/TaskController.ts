@@ -160,6 +160,12 @@ export class TaskController {
                     where: { id: userId },
                     data: { xp: { increment: 10 } }
                 })
+            } else if (validateData.completed === false && existingTask.completed === true) {
+                // Se a tarefa está sendo desmarcada, removemos 10 XP
+                await prisma.user.update({
+                    where: { id: userId },
+                    data: { xp: { decrement: 10 } }
+                })
             }
 
             return response.status(200).json({message: "Task atualizada com sucesso", taskForUpdate})
