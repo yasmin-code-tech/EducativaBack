@@ -5,11 +5,14 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "start": "node dist/server.js",
-    "build": "tsc",
+    "migrate":"prisma migrate deploy",
+    "seed":"prisma db seed",
+    "build": "prisma generate && tsc",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:deploy": "npx prisma migrate deploy --schema=src/prisma/schema.prisma",
     "prisma:studio": "npx prisma studio",
-    "test": "echo \"Nenhum teste configurado ainda\" && exit 0"
+    "test": "echo \"Nenhum teste configurado ainda\" && exit 0",
+    "prod":"npm run migrate && npm start"
   },
   "keywords": [],
   "author": "",
@@ -36,7 +39,8 @@
     "tsx": "^4.20.5",
     "typescript": "^5.9.2"
   },
-  "prisma": {
-    "schema": "src/prisma/schema.prisma" 
-  }
+  "prisma":{ 
+    "schema": "src/prisma/schema.prisma",   
+    "seed": "tsx prisma/seed.ts"
+}   
 }
