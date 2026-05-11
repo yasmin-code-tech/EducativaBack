@@ -50,6 +50,9 @@ export class UserController {
                 name: true,
                 email: true,
                 role: true,
+                photo: true,
+                phone: true,
+                course: true,
                 xp: true
             }})
 
@@ -105,12 +108,19 @@ export class UserController {
                 data: {
                     ...(data.name !== undefined ? {name: data.name} : {}),
                     ...(data.email !== undefined ? {email: data.email} : {}),
+                    ...(data.phone !== undefined ? {phone: data.phone} : {}),
+                    ...(data.course !== undefined ? {course: data.course} : {}),
+                    ...(data.photo !== undefined ? {photo: data.photo} : {}),
                 },
                 select: {
                     id: true,
                     name: true,
                     email: true,
                     role: true,
+                    photo: true,
+                    phone: true,
+                    course: true,
+                    xp: true,
                 },
             })
 

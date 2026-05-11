@@ -27,7 +27,7 @@ export class AuthController {
 
         const {password: _, ...userWithoutPassword} = user
 
-        const token = jwt.sign({id: user.id, email: user.email, role: user.role}, JWT_SECRET, {expiresIn: "1d"})
+        const token = jwt.sign({id: user.id, email: user.email, role: user.role}, JWT_SECRET, {expiresIn: "30d"})
 
         return response.json({token: token, user: userWithoutPassword})
     }

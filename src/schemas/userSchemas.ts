@@ -4,9 +4,12 @@ export const updateProfileSchema = z
     .object({
         name: z.string().min(1, {message: "Nome não pode ser vazio"}).optional(),
         email: z.email({message: "Digite um e-mail correto"}).optional(),
+        phone: z.string().optional(),
+        course: z.string().optional(),
+        photo: z.string().optional(),
     })
-    .refine((data) => data.name !== undefined || data.email !== undefined, {
-        message: "Informe ao menos nome ou e-mail para atualizar",
+    .refine((data) => Object.keys(data).length > 0, {
+        message: "Informe ao menos um campo para atualizar",
     })
 
 export const changePasswordSchema = z.object({
