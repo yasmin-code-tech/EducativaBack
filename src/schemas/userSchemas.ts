@@ -6,7 +6,9 @@ export const updateProfileSchema = z
         email: z.email({message: "Digite um e-mail correto"}).optional(),
         phone: z.string().optional(),
         course: z.string().optional(),
-        photo: z.string().optional(),
+        // Alterado para aceitar qualquer string (incluindo Base64) ou null.
+        // Se a intenção é armazenar URLs, o backend precisaria de um serviço de upload.
+        photo: z.string().optional().nullable(),
     })
     .refine((data) => Object.keys(data).length > 0, {
         message: "Informe ao menos um campo para atualizar",
